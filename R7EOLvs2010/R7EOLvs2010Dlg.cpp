@@ -115,7 +115,7 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	CLogManage	*pEolSetting;
 	pEolSetting = new CLogManage;
 	pEolSetting->SetFilePath(SETTING_FILE_PATH);
-	
+
 	strProductLine	= pEolSetting->ReadSetting(TESTER_LINE);
 	strTesterNum	= pEolSetting->ReadSetting(TESTER_NUM);
 	strTester[0]	= pEolSetting->ReadSetting(TESTER_1);
@@ -230,7 +230,7 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	m_list_test_process.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 	// 리스트 타이틀 삽입
 	m_list_test_process.InsertColumn(0, _T("검사항목"), LVCFMT_CENTER, 200, -1);
-	m_list_test_process.InsertColumn(1, _T("목표값"), LVCFMT_CENTER, 250, -1);        
+	m_list_test_process.InsertColumn(1, _T("목표값"), LVCFMT_CENTER, 250, -1);
 	m_list_test_process.InsertColumn(2, _T("측정값"), LVCFMT_CENTER, 250, -1);
 	m_list_test_process.InsertColumn(3, _T("판정"), LVCFMT_CENTER, 100, -1);
 
@@ -250,13 +250,13 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	CTime   oTime;
 	CString strTime;
 	CString strPathEolLog;
-	
+
 	oTime = CTime::GetCurrentTime();
 	strTime.Format(_T("%04d%02d%02d"), oTime.GetYear(), oTime.GetMonth(), oTime.GetDay());
 
 	strPathEolLog = _T("EOL_") + strProductName + _T("_") + strTime + _T(".log");
-	EOLSaveLog.SetFilePath(strPathEolLog);
-	
+	pEolSetting->SetFilePath(strPathEolLog);
+
 	// 모달리스 다이얼로그 초기화
 	pImgDlg = NULL;
 
@@ -267,7 +267,7 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	SetTimer(TIMER_CUR_TIME, 1000, NULL);
 
 	UpdateData(FALSE);
-	
+
 	// Setting 파일 닫기
 	delete pEolSetting;
     pEolSetting = NULL;
@@ -351,7 +351,7 @@ long CR7EOLvs2010Dlg::R7_EOL_Status_Ready(WPARAM wParam, LPARAM lParam)
 	GetDlgItem(IDC_BUTTON_AMMETER)->EnableWindow(TRUE);
 	GetDlgItem(IDC_BUTTON_DRAW)->EnableWindow(TRUE);
 	GetDlgItem(IDC_BUTTON_VIEW_AVI)->EnableWindow(TRUE);
- 
+
     m_cbutton_start.SetWindowTextW(_T("시작"));
 
 	return 1;
@@ -368,7 +368,7 @@ void CR7EOLvs2010Dlg::R7_EOL_Status_Running(void)
 	GetDlgItem(IDC_BUTTON_AMMETER)->EnableWindow(FALSE);
 	GetDlgItem(IDC_BUTTON_DRAW)->EnableWindow(FALSE);
 	GetDlgItem(IDC_BUTTON_VIEW_AVI)->EnableWindow(FALSE);
- 
+
     m_cbutton_start.SetWindowTextW(_T("중단"));
 }
 
@@ -377,14 +377,14 @@ long CR7EOLvs2010Dlg::OnCommunication(WPARAM wParam, LPARAM lParam)
 	UpdateData(TRUE);//받는 데이터 타입을 알기 위해
 	CString str = _T("");
 	CString result;
-	BYTE aByte; //데이터를 저장할 변수 
+	BYTE aByte; //데이터를 저장할 변수
 	int iSize =  (m_ComuPort.m_QueueRead).GetSize(); //포트로 들어온 데이터 갯수
 												 //SetCommState에 설정된 내용 때문에 거의 8개씩 들어옴
 	for(int i  = 0 ; i < iSize; i++)//들어온 갯수 만큼 데이터를 읽어 와 화면에 보여줌
 	{
 		(m_ComuPort.m_QueueRead).GetByte(&aByte);//큐에서 데이터 한개를 읽어옴
 		dp("%2X ",aByte);
-	}	
+	}
 
 	return 1;
 }
@@ -402,7 +402,7 @@ void CR7EOLvs2010Dlg::OnBnClickedButtonStart()
 		R7_EOL_Status_Running();
 
 		if ( pImgDlg != NULL)
-		{	
+		{
 			pImgDlg->DestroyWindow( );
 			pImgDlg = NULL;
 		}
@@ -433,11 +433,11 @@ void CR7EOLvs2010Dlg::OnBnClickedButtonStart()
 		}
 
 		if ( pImgDlg != NULL)
-		{	
+		{
 			pImgDlg->DestroyWindow( );
 			pImgDlg = NULL;
 		}
-		
+
 		dp("***************************** EOL PROGRAM END *****************************\n");
 	}
 }
@@ -445,7 +445,7 @@ void CR7EOLvs2010Dlg::OnBnClickedButtonStart()
 void CR7EOLvs2010Dlg::OnBnClickedButtonViewAvi()
 {
 	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
-	
+
 }
 
 COLORREF CR7EOLvs2010Dlg::CStringToRGB(CString strColor)
@@ -475,7 +475,7 @@ COLORREF CR7EOLvs2010Dlg::CStringToRGB(CString strColor)
 	else if ( strColor == _T("GREEN") )
 	{
 		rgb = GREEN;
-	}	
+	}
 	else if ( strColor == _T("GRAY") )
 	{
 		rgb = GRAY;
@@ -551,7 +551,7 @@ void CR7EOLvs2010Dlg::OnBnClickedButtonDraw()
 			else if ( nImgDrawNum == pImgDlg->FCW_CAR_DETECT)	pImgDlg->ImgSet(pImgDlg->FCW_CAR_DETECT);
 			else if ( nImgDrawNum == pImgDlg->FCW_CAR_WARN)		pImgDlg->ImgSet(pImgDlg->FCW_CAR_WARN);
 			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_DETECT)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_DETECT);
-			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_WARN)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_WARN);			
+			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_WARN)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_WARN);
 			else if ( nImgDrawNum == pImgDlg->LDW_DETECT_NIGHT )		pImgDlg->ImgSet(pImgDlg->LDW_DETECT_NIGHT);
 			else if ( nImgDrawNum == pImgDlg->LDW_WARN_L_NIGHT )		pImgDlg->ImgSet(pImgDlg->LDW_WARN_L_NIGHT);
 			else if ( nImgDrawNum == pImgDlg->LDW_WARN_R_NIGHT )		pImgDlg->ImgSet(pImgDlg->LDW_WARN_R_NIGHT);
@@ -568,7 +568,7 @@ void CR7EOLvs2010Dlg::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
 {
 	// TODO: 여기에 메시지 처리기 코드를 추가 및/또는 기본값을 호출합니다.
 	// 클라이언트 사각형에서 아이콘을 가운데에 맞춥니다.
- 
+
     lpMMI->ptMinTrackSize = CPoint(1280, 800);
     lpMMI->ptMaxTrackSize = CPoint(1280, 800);
 
@@ -606,25 +606,25 @@ BOOL CR7EOLvs2010Dlg::OnEraseBkgnd(CDC* pDC)
 void CR7EOLvs2010Dlg::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
 {
 	NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*>(pNMHDR);
-	
+
     // Take the default processing unless we set this to something else below.
     *pResult = CDRF_DODEFAULT;
-	
+
     // First thing - check the draw stage. If it's the control's prepaint
     // stage, then tell Windows we want messages for every item.
-	
+
     if (CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage)
 	{
 		*pResult = CDRF_NOTIFYITEMDRAW;
     }
-	else if (CDDS_ITEMPREPAINT == pLVCD->nmcd.dwDrawStage) 
+	else if (CDDS_ITEMPREPAINT == pLVCD->nmcd.dwDrawStage)
 	{
 		// This is the prepaint stage for an item. Here's where we set the
 		// item's text color. Our return value will tell Windows to draw the
 		// item itself, but it will use the new color we set here.
 		// We'll alternate between m_back0 (pale gray-green) and m_back1 (pure white)
-		
-		
+
+
 		*pResult = CDRF_NOTIFYPOSTPAINT;	// return this instead of CDRF_DODEFAULT
 
 	}
@@ -632,9 +632,9 @@ void CR7EOLvs2010Dlg::OnCustomdrawList(NMHDR* pNMHDR, LRESULT* pResult)
     {
         // If this item is selected, re-draw the icon in its normal
         // color (not blended with the highlight color)
-		
+
 		// see if we have an image list.  There's nothing to do if we don't
-					
+
 		*pResult = CDRF_SKIPDEFAULT;
 	}
 }
