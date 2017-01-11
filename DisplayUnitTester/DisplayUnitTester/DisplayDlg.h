@@ -5,6 +5,7 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 #include "TextStatic.h"
+#include "LanguagePack.h"
 
 // DisplayDlg 대화 상자입니다.
 
@@ -34,6 +35,8 @@ public:
 	static UINT Thread_JTP_Display(DisplayDlg* pDlg);//Thread함수
 	static UINT Thread_Test_Display(DisplayDlg* pDlg);//Test Thread함수
 	
+	CLanguagePack m_Language;
+
 	CJtp m_Jtp;
 	CCommThread m_ComuPort;
 	int		m_iStopBit;
@@ -94,4 +97,5 @@ private :
 public:
 	BOOL m_check_hmw_warn2;
 	BOOL m_check_hmw_warn3;
+	int m_radio_language;
 };

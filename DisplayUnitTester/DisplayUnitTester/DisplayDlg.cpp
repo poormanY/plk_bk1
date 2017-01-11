@@ -56,6 +56,7 @@ DisplayDlg::DisplayDlg(CWnd* pParent /*=NULL*/)
 	, m_check_signal_en(FALSE)
 	, m_check_hmw_warn2(FALSE)
 	, m_check_hmw_warn3(FALSE)
+	, m_radio_language(0)
 {
 }
 
@@ -107,6 +108,7 @@ void DisplayDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT_DISPLAY_VERSION, m_edit_display_version);
 	DDX_Check(pDX, IDC_CHECK_HMW_WARN2, m_check_hmw_warn2);
 	DDX_Check(pDX, IDC_CHECK_HMW_WARN3, m_check_hmw_warn3);
+	DDX_Radio(pDX, IDC_RADIO4, m_radio_language);
 }
 
 
@@ -205,6 +207,7 @@ BOOL DisplayDlg::OnInitDialog()
 	char m_szDrive[_MAX_DRIVE];
     char *pstrBuffer = NULL;
 	CString strFactoryVer;
+	CString strLanguage;
  
     pstrBuffer = getcwd( m_szPath, _MAX_PATH );
 	_splitpath(m_szPath, m_szDrive, m_szDir, m_szFname, m_szExt);
@@ -217,12 +220,32 @@ BOOL DisplayDlg::OnInitDialog()
     {
         return false;
     }
-	fscanf(pFile, "DISPlAY_VERSION     = %s\n", szData); m_DisplayVersion       = szData;
-	fscanf(pFile, "FACTORY_FIRMWARE    = %s\n", szData); strFactoryVer       = szData;
+	fscanf(pFile, "DISPlAY_VERSION     = %s\n", szData); m_DisplayVersion = szData;
+	fscanf(pFile, "FACTORY_FIRMWARE    = %s\n", szData); strFactoryVer    = szData;
+	fscanf(pFile, "LANGUAGE            = %s\n", szData); strLanguage = szData;
 
 	m_edit_set_version = m_DisplayVersion;
 
 	fclose(pFile);
+
+	// 언어 선택
+	if ( strLanguage == "KOREAN" )
+	{
+		m_radio_language = 0;
+	}
+	else if ( strLanguage == "CHINESE" )
+	{
+		m_radio_language = 1;
+	}
+	else if ( strLanguage == "ENGLISH" )
+	{
+		m_radio_language = 2;
+	}
+	else
+	{
+		m_radio_language = 2;
+	}
+	m_Language.SET_LANGUAE_PACK(m_radio_language);
 
 	if ( strFactoryVer == "1" )
 	{
@@ -254,6 +277,11 @@ BOOL DisplayDlg::OnInitDialog()
 		GetDlgItem(IDC_CHECK_LDW_ERROR)->EnableWindow(FALSE);
 		GetDlgItem(IDC_CHECK_SIGNAL_ENABLE)->EnableWindow(FALSE);
 		GetDlgItem(IDC_RADIO1)->EnableWindow(FALSE);
+		GetDlgItem(IDC_RADIO2)->EnableWindow(FALSE);
+		GetDlgItem(IDC_RADIO3)->EnableWindow(FALSE);
+		GetDlgItem(IDC_RADIO4)->EnableWindow(FALSE);
+		GetDlgItem(IDC_RADIO5)->EnableWindow(FALSE);
+		GetDlgItem(IDC_RADIO6)->EnableWindow(FALSE);
 		GetDlgItem(IDC_EDIT_TTT)->EnableWindow(FALSE);
 		GetDlgItem(IDC_EDIT_TSR_SPEED)->EnableWindow(FALSE);
 		GetDlgItem(IDC_EDIT_OVER_SPEED)->EnableWindow(FALSE);
@@ -662,7 +690,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Test Ready";
-					pDlg->m_edit_notice.m_strMsg = "검사 준비";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_READY_FOR_TEST;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 				pDlg->m_check_display_on = 1;
@@ -684,7 +712,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Volume Up";
-					pDlg->m_edit_notice.m_strMsg = "오른쪽 버튼";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_PUSH_RIGHT_BUTTON;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
@@ -700,7 +728,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Volume Down";
-					pDlg->m_edit_notice.m_strMsg = "왼쪽 버튼";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_PUSH_LEFT_BUTTON;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
@@ -742,7 +770,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 					LedTest %= 3;
 
 					//pDlg->m_edit_notice.m_strMsg = "LED Check";
-					pDlg->m_edit_notice.m_strMsg = "LED 확인";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_CHECK_LED;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
@@ -760,7 +788,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Test Ready";
-					pDlg->m_edit_notice.m_strMsg = "검사 준비";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_READY_FOR_TEST;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 				pDlg->m_check_display_on = 1;
@@ -779,9 +807,9 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Check Version\n";
-					pDlg->m_edit_notice.m_strMsg = "버전 확인\n";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_CHECK_VERSION;
 					pDlg->UpdateData(TRUE);
-					pDlg->m_edit_notice.m_strMsg += pDlg->m_edit_set_version;
+					pDlg->m_edit_notice.m_strMsg += _T("\r\n") + pDlg->m_edit_set_version;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
@@ -796,7 +824,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Func Off";
-					pDlg->m_edit_notice.m_strMsg = "가운데 버튼";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_PUSH_MIDDLE_BUTTON;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
@@ -812,7 +840,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Volume Up";
-					pDlg->m_edit_notice.m_strMsg = "오른쪽 버튼";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_PUSH_RIGHT_BUTTON;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
@@ -828,7 +856,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Volume Down";
-					pDlg->m_edit_notice.m_strMsg = "왼쪽 버튼";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_PUSH_LEFT_BUTTON;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
@@ -844,7 +872,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 				{
 					notice_write = 1;
 					//pDlg->m_edit_notice.m_strMsg = "Install Mode";
-					pDlg->m_edit_notice.m_strMsg = "왼쪽 + 오른쪽";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_PUSH_LEFT_RIGHT_BUTTON;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
@@ -902,7 +930,7 @@ UINT DisplayDlg::Thread_Test_Display(DisplayDlg* pDlg)
 					LedTest %= 3;
 
 					//pDlg->m_edit_notice.m_strMsg = "LED Check";
-					pDlg->m_edit_notice.m_strMsg = "LED 확인";
+					pDlg->m_edit_notice.m_strMsg = pDlg->m_Language.LP_CHECK_LED;
 					pDlg->m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 				}
 
