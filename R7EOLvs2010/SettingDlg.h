@@ -58,13 +58,18 @@ const CString STEP_LDW_DETECT	= _T("STEP_LDW_DETECT");
 const CString STEP_LDW_WARN_L	= _T("STEP_LDW_WARN_L");
 const CString STEP_LDW_WARN_R	= _T("STEP_LDW_WARN_R");
 const CString STEP_FCW_WARN		= _T("STEP_FCW_WARN");
+const CString STEP_FCW_WARN2	= _T("STEP_FCW_WARN2");
+const CString STEP_FCW_WARN3	= _T("STEP_FCW_WARN3");
 const CString STEP_LDW_WARN_L_WINK_L	= _T("STEP_LDW_WARN_L_WINK_L");
 const CString STEP_LDW_WARN_L_WINK_R	= _T("STEP_LDW_WARN_L_WINK_R");
 const CString STEP_LDW_WARN_L_WINK_LR	= _T("STEP_LDW_WARN_L_WINK_LR");
 const CString STEP_LDW_WARN_R_WINK_L	= _T("STEP_LDW_WARN_R_WINK_L");
 const CString STEP_LDW_WARN_R_WINK_R	= _T("STEP_LDW_WARN_R_WINK_R");
 const CString STEP_LDW_WARN_R_WINK_LR	= _T("STEP_LDW_WARN_R_WINK_LR");
-const CString STEP_FCDA_WARN	= _T("STEP_FCDA_WARN");
+const CString STEP_FCDA_WARN			= _T("STEP_FCDA_WARN");
+const CString STEP_ADAS_ALARM_DELAY		= _T("STEP_ALARM_DELAY");
+// 언어 선택
+const CString SET_LANGUAGE		= _T("LANGUAGE");
 
 class SettingDlg : public CDialogEx
 {
@@ -136,7 +141,9 @@ public:
 	BOOL m_check_ldw_detect;
 	BOOL m_check_ldw_warn_l;
 	BOOL m_check_ldw_warn_r;
-	BOOL m_check_fcw_warn;
+	BOOL m_check_fcw_warn;	
+	BOOL m_check_fcw_warn2;
+	BOOL m_check_fcw_warn3;
 	BOOL m_check_ldw_warnL_winkL;
 	BOOL m_check_ldw_warnL_winkR;
 	BOOL m_check_ldw_warnL_winkLR;
@@ -154,6 +161,9 @@ public:
 	BOOL m_check_accleration;
 	BOOL m_check_speed_pulse;
 	BOOL m_check_dtc_clear;
+	
+	CEditBox m_edit_adas_alarm_delay;
+	
 	// Log File Path	
 	CStatic m_static_g_log_path;
 	CEdit m_edit_set_log_path;
@@ -199,4 +209,7 @@ public:
 	afx_msg void OnEnChangeEditLaneLColor();
 	afx_msg void OnEnChangeEditLaneRColor();
 	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
+	afx_msg void OnEnChangeEditAdasAlarmDelay();
+	afx_msg void OnBnClickedRadio(UINT msg);
+	int m_radio_language;
 };

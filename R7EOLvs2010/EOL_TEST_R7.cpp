@@ -61,7 +61,7 @@ BOOL CEOL_R7::END_EOL_TEST()
 
 UINT ThreadEolTest_R7(LPVOID pParam)
 {
-	pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->strProductName + _T("\r\n검사 대기중"), UPDATE_ON);
+	pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->strProductName + pMainDlg->EOLLanguage.LP_TEST_WAITING, UPDATE_ON);
 
 	CString strProcess;
 	int nTotalProcess = 0;
@@ -108,6 +108,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 	if ( pMainDlg->bEnStep_LDW_Warn_L == 1 )	nTotalProcess++;
 	if ( pMainDlg->bEnStep_LDW_Warn_R == 1 )	nTotalProcess++;
 	if ( pMainDlg->bEnStep_FCW_Warn	  == 1 )	nTotalProcess++;
+	if ( pMainDlg->bEnStep_FCW_Warn2	  == 1 )	nTotalProcess++;
+	if ( pMainDlg->bEnStep_FCW_Warn3	  == 1 )	nTotalProcess++;
 	if ( pMainDlg->bEnStep_FCDA_Warn == 1 )		nTotalProcess++;
 	if ( pMainDlg->bEnStep_LDW_WarnL_WinkL == 1 )	nTotalProcess++;
 	if ( pMainDlg->bEnStep_LDW_WarnL_WinkR == 1 )	nTotalProcess++;
@@ -126,8 +128,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CONNECT_IOBOARD() == FALSE )
 			{
 				EOL_TEST_R7->m_tThreadStop = true;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("IO보드 연결실패"), UPDATE_ON);
-				AfxMessageBox(_T("IO보드 연결실패"));
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_IO_BOARD + _T("\r\n") + pMainDlg->EOLLanguage.LP_CONNECT_FAIL, UPDATE_ON);
+				AfxMessageBox(pMainDlg->EOLLanguage.LP_IO_BOARD + _T("\r\n") + pMainDlg->EOLLanguage.LP_CONNECT_FAIL);
 			}
 		}
 
@@ -136,8 +138,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CONNECT_BARCODE1() == FALSE )
 			{
 				EOL_TEST_R7->m_tThreadStop = true;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("바코드 스캐너1 연결실패"), UPDATE_ON);
-				AfxMessageBox(_T("바코드 스캐너1 연결실패"));
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_BARCODE1 + _T("\r\n") + pMainDlg->EOLLanguage.LP_CONNECT_FAIL, UPDATE_ON);
+				AfxMessageBox(pMainDlg->EOLLanguage.LP_BARCODE1 + _T("\r\n") + pMainDlg->EOLLanguage.LP_CONNECT_FAIL);
 			}
 		}
 
@@ -146,8 +148,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CONNECT_BARCODE2() == FALSE )
 			{
 				EOL_TEST_R7->m_tThreadStop = true;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("바코드 스캐너2 연결실패"), UPDATE_ON);
-				AfxMessageBox(_T("바코드 스캐너2 연결실패"));
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_BARCODE2 + _T("\r\n") + pMainDlg->EOLLanguage.LP_CONNECT_FAIL, UPDATE_ON);
+				AfxMessageBox(pMainDlg->EOLLanguage.LP_BARCODE2 + _T("\r\n") + pMainDlg->EOLLanguage.LP_CONNECT_FAIL);
 			}
 		}
 	}
@@ -159,8 +161,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 		EOL_TEST_R7->bLogStart = true;
 	}
 	while ( EOL_TEST_R7->m_tThreadStop == false )
-	{		
-		pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->strProductName + _T("\r\n검사 대기중"), UPDATE_ON);
+	{
+		pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_TEST_WAITING, UPDATE_ON);
 
 		if ( EOL_TEST_R7->m_tThreadStop == true )
 		{
@@ -171,7 +173,7 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CONNECT_POWER() == FALSE )
 			{
 				EOL_TEST_R7->m_tThreadStop = true;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n전원 연결실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_POWER + _T("\r\n") + pMainDlg->EOLLanguage.LP_CONNECT_FAIL, UPDATE_ON);
 			}
 		}
 
@@ -190,11 +192,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CONNECT_USART() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nUSART 통신실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nUSART ") + pMainDlg->EOLLanguage.LP_COMMUNICATION_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -208,11 +210,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CHK_SERIAL() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nSerial번호 확인실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_SERIAL_NUMBER + pMainDlg->EOLLanguage.LP_CONFIRM_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -226,11 +228,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CHK_SW_VERSION() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nS/W버전 확인실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_SOFTWARE_VERSION + pMainDlg->EOLLanguage.LP_CONFIRM_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -244,11 +246,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CHK_MCU_VERSION() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nMCU버전 확인실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nMCU") + pMainDlg->EOLLanguage.LP_MCU_VERSION + pMainDlg->EOLLanguage.LP_CONFIRM_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -262,11 +264,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CHK_VANISH() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n가속도값 확인실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_ACCELERATION + pMainDlg->EOLLanguage.LP_CONFIRM_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -280,11 +282,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CHK_SPEED_PULSE() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n속도펄스값 확인실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_SPEED_PULSE + pMainDlg->EOLLanguage.LP_CONFIRM_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -298,11 +300,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_DETECT() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선 인식실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_DETECT_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -316,13 +318,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_LEFT_WARN() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선좌측 경보실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_WARNING_L_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 		
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -334,13 +338,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_RIGHT_WARN() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선우측 경보실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_WARNING_R_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -352,13 +358,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_LEFT_WARN_WINK_L() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선좌측 경보실패\r\n방향지시등(좌)"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_WARNING_L_FAIL + _T("\r\n") +  + pMainDlg->EOLLanguage.LP_WINKER_L, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -370,13 +378,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_RIGHT_WARN_WINK_R() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선우측 경보실패\r\n방향지시등(우)"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_WARNING_R_FAIL + _T("\r\n") +  + pMainDlg->EOLLanguage.LP_WINKER_R, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -388,13 +398,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_LEFT_WARN_WINK_R() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선좌측 경보실패\r\n방향지시등(우)"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_WARNING_L_FAIL + _T("\r\n") +  + pMainDlg->EOLLanguage.LP_WINKER_R, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -406,13 +418,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_RIGHT_WARN_WINK_L() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선우측 경보실패\r\n방향지시등(좌)"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_WARNING_R_FAIL + _T("\r\n") +  + pMainDlg->EOLLanguage.LP_WINKER_L, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -424,13 +438,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_LEFT_WARN_WINK_LR() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선좌측 경보실패\r\n비상정지등"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_WARNING_L_FAIL + _T("\r\n") +  + pMainDlg->EOLLanguage.LP_EMERGENCY_LAMP, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -442,13 +458,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_LDW_RIGHT_WARN_WINK_LR() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차선우측 경보실패\r\n비상정지등"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_LANE_WARNING_R_FAIL + _T("\r\n") +  + pMainDlg->EOLLanguage.LP_EMERGENCY_LAMP, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 		
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -460,13 +478,55 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_FCW_WARN() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n차량충돌 경보실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_FCW_WARNING_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
+		}
+
+		if ( EOL_TEST_R7->m_tThreadStop == true )
+		{
+			break;
+		}
+		else if ( (EOL_TEST_R7->m_EOLTestResult == PASS) && (pMainDlg->bEnStep_FCW_Warn2 == 1) )
+		{
+			if ( EOL_TEST_R7->STEP_ADAS_FCW_WARN2() == FALSE )
+			{
+				EOL_TEST_R7->m_EOLTestResult = FAIL;
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_FCW_WARNING_FAIL + (_T("2")), UPDATE_ON);
+			}
+			else
+			{
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
+			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
+		}
+
+		if ( EOL_TEST_R7->m_tThreadStop == true )
+		{
+			break;
+		}
+		else if ( (EOL_TEST_R7->m_EOLTestResult == PASS) && (pMainDlg->bEnStep_FCW_Warn3 == 1) )
+		{
+			if ( EOL_TEST_R7->STEP_ADAS_FCW_WARN3() == FALSE )
+			{
+				EOL_TEST_R7->m_EOLTestResult = FAIL;
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_FCW_WARNING_FAIL + (_T("3")), UPDATE_ON);
+			}
+			else
+			{
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
+			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -478,13 +538,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_ADAS_FCDA_WARN() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nFCDA 경보실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nFCDA") + pMainDlg->EOLLanguage.LP_WARNING_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
+			// 경보 검사 간의 딜레이
+			Sleep(pMainDlg->m_nAlarmDelay);
 		}
 		
 		if ( EOL_TEST_R7->m_tThreadStop == true )
@@ -496,11 +558,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_DTC_ALL_CLEAR() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\nDTC 삭제실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_DTC_DELETE_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -514,7 +576,7 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_DISCONNECT_POWER() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n전원 해제실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_POWER_OFF_FAIL, UPDATE_ON);
 			}
 		}
 
@@ -527,11 +589,11 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 			if ( EOL_TEST_R7->STEP_CHECK_BARCODE2_SERIAL() == FALSE )
 			{
 				EOL_TEST_R7->m_EOLTestResult = FAIL;
-				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n케이스 바코드 실패"), UPDATE_ON);
+				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, _T("R7\r\n") + pMainDlg->EOLLanguage.LP_CASE_BARCODE_FAIL, UPDATE_ON);
 			}
 			else
 			{
-				strProcess.Format(_T("R7\r\n검사중 %d/%d"), nCurProcess++, nTotalProcess);
+				strProcess.Format(_T("R7\r\nTesting %d/%d"), nCurProcess++, nTotalProcess);
 				pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, strProcess, UPDATE_ON);
 			}
 		}
@@ -540,8 +602,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 		// 검사 결과 - 양품/불량 판단
 		if ( EOL_TEST_R7->m_EOLTestResult == PASS )
 		{
-			pMainDlg->m_edit_notice.SetText(GREEN, BLACK, _T("양품"), UPDATE_ON);
-			pMainDlg->m_edit_notice2.SetText(GREEN, BLACK, pMainDlg->strProductName + _T("\r\n검사 통과"), UPDATE_ON);
+			pMainDlg->m_edit_notice.SetText(GREEN, BLACK, pMainDlg->EOLLanguage.LP_PASS, UPDATE_ON);
+			pMainDlg->m_edit_notice2.SetText(GREEN, BLACK, pMainDlg->strProductName + pMainDlg->EOLLanguage.LP_TEST_PASS, UPDATE_ON);
 
 			if ( pMainDlg->bEnStep_IoBoard == 1 )
 			{
@@ -557,15 +619,15 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 		}
 		else if ( EOL_TEST_R7->m_EOLTestResult == FAIL )
 		{
-			pMainDlg->m_edit_notice.SetText(RED, BLACK, _T("불량"), UPDATE_ON);
-			pMainDlg->m_edit_notice2.SetText(RED, BLACK, pMainDlg->strProductName + _T("\r\n검사 실패"), UPDATE_ON);
+			pMainDlg->m_edit_notice.SetText(RED, BLACK, pMainDlg->EOLLanguage.LP_FAIL, UPDATE_ON);
+			pMainDlg->m_edit_notice2.SetText(RED, BLACK, pMainDlg->strProductName + pMainDlg->EOLLanguage.LP_TEST_FAIL, UPDATE_ON);
 			
 			if ( pMainDlg->bEnStep_IoBoard == 1 )
 			{
 				pIoBoard->PutOutBit(_BIT_OUT_LED_G_OK, false);
 				pIoBoard->PutOutBit(_BIT_OUT_LED_R_NG, true);
 			}
-			AfxMessageBox(_T("불량 발생"));
+			AfxMessageBox(pMainDlg->EOLLanguage.LP_FAIL_OCCURS);
 
 			nFailNum++;
 			strFailNum.Format(_T("%d"), nFailNum);
@@ -605,8 +667,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 	delete EOL_TEST_R7;
 	EOL_TEST_R7 = NULL;
 
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("PLK Technologies\r\nLDWS ") + pMainDlg->strProductName + _T("\r\n양산 최종검사"), UPDATE_ON);
-	pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->strProductName + _T("\r\n검사 종료"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("PLK Technologies\r\nLDWS ") + pMainDlg->strProductName + _T("\r\n") + pMainDlg->EOLLanguage.LP_LAST_TEST, UPDATE_ON);
+	pMainDlg->m_edit_notice2.SetText(SOFT_GREEN, BLACK, pMainDlg->strProductName + _T("\r\n") + pMainDlg->EOLLanguage.LP_TEST_END, UPDATE_ON);
 
 	pMainDlg->PostMessageW(_WM_MAIN_DLG_END);
 
@@ -633,9 +695,12 @@ BOOL CEOL_R7::START_EOL_TEST_LOG()
 	// EOL_R7_HMC_20161114.log
 	pMainDlg->EOLSaveLog.SetFilePath(strLogFileName);
 
-	strLogContent = _T("생산라인 : ");
+	strLogContent = pMainDlg->EOLLanguage.LP_FACTORY_LANE;
+	strLogContent += _T(" : ");
 	strLogContent += pMainDlg->strProductLine;
-	strLogContent += _T(", 검사자 : ");
+	strLogContent += _T(", ");
+	strLogContent += pMainDlg->EOLLanguage.LP_TESTER;
+	strLogContent += _T(" : ");
 	pMainDlg->m_combo_tester.GetLBText(pMainDlg->m_combo_tester.GetCurSel(), strTester);
 	strLogContent += strTester;
 	strLogContent += _T("\r\n");
@@ -654,11 +719,11 @@ BOOL CEOL_R7::SAVE_EOL_TEST_LOG()
 	
 	if ( EOL_TEST_R7->m_EOLTestResult == PASS )
 	{
-		strItemTitle.Format(_T("테스트%d [양품]\r\n"), _ttoi(pMainDlg->m_edit_total_num.m_strMsg));
+		strItemTitle.Format(_T("Test%d [PASS]\r\n"), _ttoi(pMainDlg->m_edit_total_num.m_strMsg));
 	}
 	else if ( EOL_TEST_R7->m_EOLTestResult == FAIL )
 	{
-		strItemTitle.Format(_T("테스트%d [불량]\r\n"), _ttoi(pMainDlg->m_edit_total_num.m_strMsg));
+		strItemTitle.Format(_T("Test%d [FAIL]\r\n"), _ttoi(pMainDlg->m_edit_total_num.m_strMsg));
 	}
 	pMainDlg->EOLSaveLog.WriteLogTime(strItemTitle);
 
@@ -700,13 +765,13 @@ BOOL CEOL_R7::END_EOL_TEST_LOG()
 {
 	CString strLogContent;
 
-	strLogContent = _T("양품 : ");
+	strLogContent = _T("PASS : ");
 	strLogContent += pMainDlg->m_edit_pass_num.m_strMsg;
-	strLogContent += _T(", 불량 : ");
+	strLogContent += _T(", FAIL : ");
 	strLogContent += pMainDlg->m_edit_fail_num.m_strMsg;
-	strLogContent += _T(", 전체 : ");
+	strLogContent += _T(", TOTAL : ");
 	strLogContent += pMainDlg->m_edit_total_num.m_strMsg;
-	strLogContent += _T(", 양품률 : ");
+	strLogContent += _T(", PASS RATE : ");
 	strLogContent += pMainDlg->m_edit_pass_percent.m_strMsg;
 	strLogContent += _T("\r\n**********************************************************************************\r\n");
 	strLogContent += _T("\r\n\r\n");
@@ -718,7 +783,7 @@ BOOL CEOL_R7::END_EOL_TEST_LOG()
 
 BOOL CEOL_R7::STEP_CONNECT_IOBOARD()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("IO 보드 연결중"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_IO_BOARD + _T("\r\n") + pMainDlg->EOLLanguage.LP_CONNECTING, UPDATE_ON);
 	
 	// IO 보드 초기화
 	pIoBoard = new CIoBoardMgt;
@@ -784,7 +849,7 @@ BOOL CEOL_R7::STEP_CONNECT_IOBOARD()
 
 BOOL CEOL_R7::STEP_CONNECT_BARCODE1()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("바코드 스캐너1 연결중"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_BARCODE1 + pMainDlg->EOLLanguage.LP_CONNECTING, UPDATE_ON);
 
 	// 포트 불러오기
 	CString strBar1Com;
@@ -824,7 +889,7 @@ BOOL CEOL_R7::STEP_CONNECT_BARCODE1()
 
 BOOL CEOL_R7::STEP_CONNECT_BARCODE2()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("바코드 스캐너2 연결중"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_BARCODE2 + pMainDlg->EOLLanguage.LP_CONNECTING, UPDATE_ON);
 
 	// 포트 불러오기
 	CString strBar2Com;
@@ -911,7 +976,7 @@ BOOL CEOL_R7::CloseBarcode2()
 
 BOOL CEOL_R7::STEP_CONNECT_POWER()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("제품을 안착시키고 연결 한 후에\r\n시작 버튼을 누르세요"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_TEST_PROCESS_START, UPDATE_ON);
 	
 	BOOL bResult = FALSE;
 
@@ -950,7 +1015,7 @@ BOOL CEOL_R7::STEP_CONNECT_POWER()
 
 BOOL CEOL_R7::STEP_DISCONNECT_POWER()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("전원을 해제 합니다"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_POWER_OFF, UPDATE_ON);
 
 	BOOL bResult = FALSE;
 
@@ -972,12 +1037,12 @@ BOOL CEOL_R7::STEP_DISCONNECT_POWER()
 
 BOOL CEOL_R7::STEP_CONNECT_USART()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("통신 연결 확인"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_CONNECTION_CHECK, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->CALIBRATION);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("통신 연결 확인");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_CONNECTION_CHECK;
 	CString strTgtMsg = _T("1");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1021,12 +1086,12 @@ BOOL CEOL_R7::STEP_CONNECT_USART()
 
 BOOL CEOL_R7::STEP_CHK_SERIAL()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("시리얼 번호 확인"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_SERIAL_NUMBER, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->CALIBRATION);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("시리얼 번호");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_SERIAL_NUMBER;
 	CString strTgtMsg = _T("-");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1095,12 +1160,12 @@ BOOL CEOL_R7::STEP_CHK_SERIAL()
 
 BOOL CEOL_R7::STEP_CHK_SW_VERSION()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("SW 버전 확인"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_SOFTWARE_VERSION, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->CALIBRATION);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("SW 버전");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_SOFTWARE_VERSION;
 	CString strTgtMsg = pMainDlg->strSwVer;
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1170,12 +1235,12 @@ BOOL CEOL_R7::STEP_CHK_SW_VERSION()
 
 BOOL CEOL_R7::STEP_CHK_MCU_VERSION()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("MCU 버전 확인"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_MCU_VERSION, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->CALIBRATION);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("MCU 버전");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_MCU_VERSION;
 	CString strTgtMsg = pMainDlg->strMcuVer;
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1223,12 +1288,12 @@ BOOL CEOL_R7::STEP_CHK_MCU_VERSION()
 
 BOOL CEOL_R7::STEP_CHK_VANISH()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("가속도 세팅 값 확인"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_ACCELERATION, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->CALIBRATION);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("가속도 세팅값");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_ACCELERATION;
 	CString strTgtMsg = _T("Acc X, Acc Z");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1286,12 +1351,12 @@ BOOL CEOL_R7::STEP_CHK_VANISH()
 
 BOOL CEOL_R7::STEP_CHK_SPEED_PULSE()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("속도 펄스 세팅 값 확인"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_SPEED_PULSE, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->CALIBRATION);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("속도펄스 세팅값");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_SPEED_PULSE;
 	CString strTgtMsg = _T("-");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1430,16 +1495,14 @@ BOOL CEOL_R7::DISPLAY_ADAS_INFO(void *a_pAdasInfoData, int a_puDataLen)
 	return true;
 }
 
-
-
 BOOL CEOL_R7::STEP_ADAS_LDW_DETECT()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 차선 인식"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_DETECT, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_DETECT);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 차선인식");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_DETECT;
 	CString strTgtMsg = _T("1");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1501,12 +1564,12 @@ BOOL CEOL_R7::STEP_ADAS_LDW_DETECT()
 
 BOOL CEOL_R7::STEP_ADAS_LDW_LEFT_WARN()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 좌측 이탈 경보"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_WARNING_L, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_WARN_L);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 좌측이탈경보");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_WARNING_L;
 	CString strTgtMsg = _T("4");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1569,12 +1632,12 @@ BOOL CEOL_R7::STEP_ADAS_LDW_LEFT_WARN()
 
 BOOL CEOL_R7::STEP_ADAS_LDW_RIGHT_WARN()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 우측 이탈 경보"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_WARNING_R, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_WARN_R);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 우측이탈경보");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_WARNING_R;
 	CString strTgtMsg = _T("8");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1637,12 +1700,12 @@ BOOL CEOL_R7::STEP_ADAS_LDW_RIGHT_WARN()
 
 BOOL CEOL_R7::STEP_ADAS_LDW_LEFT_WARN_WINK_L()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 좌측 이탈 경보\r\n방향지시등(좌)"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_WARNING_L + _T("\r\n") + pMainDlg->EOLLanguage.LP_WINKER_L, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_WARN_L);
 
 	BOOL bResult = TRUE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 이탈(L)방향지시등(L)");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_WARNING_L + pMainDlg->EOLLanguage.LP_WINKER_L;
 	CString strTgtMsg = _T("0");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1705,12 +1768,12 @@ BOOL CEOL_R7::STEP_ADAS_LDW_LEFT_WARN_WINK_L()
 
 BOOL CEOL_R7::STEP_ADAS_LDW_LEFT_WARN_WINK_R()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 좌측 이탈 경보\r\n방향지시등(우)"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_WARNING_L + _T("\r\n") + pMainDlg->EOLLanguage.LP_WINKER_R, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_WARN_L);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 이탈(L)방향지시등(R)");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_WARNING_L + pMainDlg->EOLLanguage.LP_WINKER_R;
 	CString strTgtMsg = _T("4");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1773,12 +1836,12 @@ BOOL CEOL_R7::STEP_ADAS_LDW_LEFT_WARN_WINK_R()
 
 BOOL CEOL_R7::STEP_ADAS_LDW_LEFT_WARN_WINK_LR()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 좌측 이탈 경보\r\n비상정지등"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_WARNING_L + _T("\r\n") + pMainDlg->EOLLanguage.LP_EMERGENCY_LAMP, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_WARN_L);
 
 	BOOL bResult = TRUE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 이탈(L)비상정지등");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_WARNING_L + pMainDlg->EOLLanguage.LP_EMERGENCY_LAMP;
 	CString strTgtMsg = _T("0");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1841,12 +1904,12 @@ BOOL CEOL_R7::STEP_ADAS_LDW_LEFT_WARN_WINK_LR()
 
 BOOL CEOL_R7::STEP_ADAS_LDW_RIGHT_WARN_WINK_L()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 우측 이탈 경보\r\n방향지시등(좌)"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_WARNING_R + _T("\r\n") + pMainDlg->EOLLanguage.LP_WINKER_L, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_WARN_R);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 이탈(R)방향지시등(L)");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_WARNING_R + pMainDlg->EOLLanguage.LP_WINKER_L;
 	CString strTgtMsg = _T("8");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1909,12 +1972,12 @@ BOOL CEOL_R7::STEP_ADAS_LDW_RIGHT_WARN_WINK_L()
 
 BOOL CEOL_R7::STEP_ADAS_LDW_RIGHT_WARN_WINK_R()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 우측 이탈 경보\r\n방향지시등(우)"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_WARNING_R + _T("\r\n") + pMainDlg->EOLLanguage.LP_WINKER_R, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_WARN_R);
 
 	BOOL bResult = TRUE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 이탈(R)방향지시등(R)");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_WARNING_R + pMainDlg->EOLLanguage.LP_WINKER_R;
 	CString strTgtMsg = _T("0");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -1977,12 +2040,12 @@ BOOL CEOL_R7::STEP_ADAS_LDW_RIGHT_WARN_WINK_R()
 
 BOOL CEOL_R7::STEP_ADAS_LDW_RIGHT_WARN_WINK_LR()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("LDWS 우측 이탈 경보\r\n비상정지등"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_LANE_WARNING_R + _T("\r\n") + pMainDlg->EOLLanguage.LP_EMERGENCY_LAMP, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_WARN_R);
 
 	BOOL bResult = TRUE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("LDWS 이탈(R)비상정지등");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_LANE_WARNING_R + pMainDlg->EOLLanguage.LP_EMERGENCY_LAMP;
 	CString strTgtMsg = _T("0");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -2045,14 +2108,14 @@ BOOL CEOL_R7::STEP_ADAS_LDW_RIGHT_WARN_WINK_LR()
 
 BOOL CEOL_R7::STEP_ADAS_FCDA_WARN()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("FCDA 알람 경보"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("FCDA"), UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->FCDA_CAR_DETECT);
 	Sleep(1000);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->FCDA_CAR_WARN);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("FCDA 알람경보");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = _T("FCDA");
 	CString strTgtMsg = _T("256");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -2115,14 +2178,164 @@ BOOL CEOL_R7::STEP_ADAS_FCDA_WARN()
 
 BOOL CEOL_R7::STEP_ADAS_FCW_WARN()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("FCW 차량 경보"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_FCW_WARNING, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->FCW_CAR_DETECT);
 	Sleep(1000);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->FCW_CAR_WARN);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("FCW 차량경보");
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_FCW_WARNING;
+	CString strTgtMsg = _T("2,8");
+	CString strSrcMsg = _T("0");
+	int nListPos;
+	int nRxLength;
+	BYTE arbRxData[256];
+	HUB_INFO *oOutput_COMM;
+
+	// ADAS 입력 데이터
+	( pMainDlg->bEnStep_FCW_Speed == 1 )? (m_nVehicleSpeed = pMainDlg->m_nVehicleFcwSpd) : (m_nVehicleSpeed = 100);
+	m_bWinkL = 0;
+	m_bWinkR = 0;
+
+	nListPos = pMainDlg->m_list_test_process.GetItemCount();
+	pMainDlg->m_list_test_process.InsertItem(nListPos, strTestItem);
+	pMainDlg->m_list_test_process.SetItemText(nListPos, 1, strTgtMsg);
+
+	while ( m_tThreadStop == false )
+	{
+		if ( m_JTP_Com.SendMsg_ADASInfoGet_R7(arbRxData, &nRxLength, m_nVehicleSpeed, m_bWinkL, m_bWinkR) == TRUE )
+		{
+			DISPLAY_ADAS_INFO(arbRxData, nRxLength);
+
+			oOutput_COMM = new HUB_INFO;
+			memcpy(oOutput_COMM, arbRxData, nRxLength);
+
+			if ( (oOutput_COMM->uFcwState & ADAS_FCW_HMW_WARN) != 0 )
+			{
+				strSrcMsg.Format(_T("%d"), oOutput_COMM->uFcwState & ADAS_FCW_HMW_WARN );
+				bResult = TRUE;
+			}
+			else if ( (oOutput_COMM->uFcwState & ADAS_FCW_HMW_WARN) != 0 )
+			{
+				strSrcMsg.Format(_T("%d"), oOutput_COMM->uFcwState & ADAS_FCW_FCW_WARN );
+				bResult = TRUE;
+			}
+
+			delete oOutput_COMM;
+			oOutput_COMM = NULL;
+
+			if ( bResult == TRUE ) break;
+		}
+
+		// 5초간 연결이 되지 않으면 Fail
+		if ( (GetTickCount() - nStartTime) > 5000 )
+		{
+			strSrcMsg = _T("Comm Error");
+			break;
+		}
+	}
+
+	pMainDlg->m_list_test_process.SetItemText(nListPos, 2, strSrcMsg);
+	
+	if ( bResult == TRUE )
+	{
+		pMainDlg->m_list_test_process.SetItemText(nListPos, 3, _T("PASS"));
+	}
+	else
+	{
+		pMainDlg->m_list_test_process.SetItemText(nListPos, 3, _T("FAIL"));
+	}
+
+	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_DETECT);
+	return bResult;
+}
+
+BOOL CEOL_R7::STEP_ADAS_FCW_WARN2()
+{
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_FCW_WARNING + _T("2"), UPDATE_ON);
+	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->FCW_CAR_DETECT2);
+	Sleep(1000);
+	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->FCW_CAR_WARN2);
+
+	BOOL bResult = FALSE;
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_FCW_WARNING + _T("2");
+	CString strTgtMsg = _T("2,8");
+	CString strSrcMsg = _T("0");
+	int nListPos;
+	int nRxLength;
+	BYTE arbRxData[256];
+	HUB_INFO *oOutput_COMM;
+
+	// ADAS 입력 데이터
+	( pMainDlg->bEnStep_FCW_Speed == 1 )? (m_nVehicleSpeed = pMainDlg->m_nVehicleFcwSpd) : (m_nVehicleSpeed = 100);
+	m_bWinkL = 0;
+	m_bWinkR = 0;
+
+	nListPos = pMainDlg->m_list_test_process.GetItemCount();
+	pMainDlg->m_list_test_process.InsertItem(nListPos, strTestItem);
+	pMainDlg->m_list_test_process.SetItemText(nListPos, 1, strTgtMsg);
+
+	while ( m_tThreadStop == false )
+	{
+		if ( m_JTP_Com.SendMsg_ADASInfoGet_R7(arbRxData, &nRxLength, m_nVehicleSpeed, m_bWinkL, m_bWinkR) == TRUE )
+		{
+			DISPLAY_ADAS_INFO(arbRxData, nRxLength);
+
+			oOutput_COMM = new HUB_INFO;
+			memcpy(oOutput_COMM, arbRxData, nRxLength);
+
+			if ( (oOutput_COMM->uFcwState & ADAS_FCW_HMW_WARN) != 0 )
+			{
+				strSrcMsg.Format(_T("%d"), oOutput_COMM->uFcwState & ADAS_FCW_HMW_WARN );
+				bResult = TRUE;
+			}
+			else if ( (oOutput_COMM->uFcwState & ADAS_FCW_HMW_WARN) != 0 )
+			{
+				strSrcMsg.Format(_T("%d"), oOutput_COMM->uFcwState & ADAS_FCW_FCW_WARN );
+				bResult = TRUE;
+			}
+
+			delete oOutput_COMM;
+			oOutput_COMM = NULL;
+
+			if ( bResult == TRUE ) break;
+		}
+
+		// 5초간 연결이 되지 않으면 Fail
+		if ( (GetTickCount() - nStartTime) > 5000 )
+		{
+			strSrcMsg = _T("Comm Error");
+			break;
+		}
+	}
+
+	pMainDlg->m_list_test_process.SetItemText(nListPos, 2, strSrcMsg);
+	
+	if ( bResult == TRUE )
+	{
+		pMainDlg->m_list_test_process.SetItemText(nListPos, 3, _T("PASS"));
+	}
+	else
+	{
+		pMainDlg->m_list_test_process.SetItemText(nListPos, 3, _T("FAIL"));
+	}
+
+	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->LDW_DETECT);
+	return bResult;
+}
+
+BOOL CEOL_R7::STEP_ADAS_FCW_WARN3()
+{
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_FCW_WARNING + _T("3"), UPDATE_ON);
+	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->FCW_CAR_DETECT3);
+	Sleep(1000);
+	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->FCW_CAR_WARN3);
+
+	BOOL bResult = FALSE;
+	DWORD nStartTime = GetTickCount();
+	CString strTestItem = pMainDlg->EOLLanguage.LP_FCW_WARNING + _T("3");
 	CString strTgtMsg = _T("2,8");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -2194,7 +2407,7 @@ BOOL CEOL_R7::STEP_DTC_ALL_CLEAR()
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->CALIBRATION);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
+	DWORD nStartTime = GetTickCount();
 	CString strTestItem = _T("DTC ALL CLEAR");
 	CString strTgtMsg = _T("1");
 	CString strSrcMsg = _T("0");
@@ -2236,12 +2449,12 @@ BOOL CEOL_R7::STEP_DTC_ALL_CLEAR()
 
 BOOL CEOL_R7::STEP_CHECK_BARCODE2_SERIAL()
 {
-	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, _T("케이스 바코드 확인"), UPDATE_ON);
+	pMainDlg->m_edit_notice.SetText(SOFT_GREEN, BLACK, pMainDlg->EOLLanguage.LP_CASE_BARCODE, UPDATE_ON);
 	pMainDlg->pImgDlg->ImgSet(pMainDlg->pImgDlg->CALIBRATION);
 
 	BOOL bResult = FALSE;
-	int nStartTime = GetTickCount();
-	CString strTestItem = _T("케이스 바코드");
+	DWORD nStartTime;
+	CString strTestItem = pMainDlg->EOLLanguage.LP_CASE_BARCODE;
 	CString strTgtMsg = _T("-");
 	CString strSrcMsg = _T("0");
 	int nListPos;
@@ -2251,13 +2464,15 @@ BOOL CEOL_R7::STEP_CHECK_BARCODE2_SERIAL()
 	pMainDlg->m_list_test_process.InsertItem(nListPos, strTestItem);
 	pMainDlg->m_list_test_process.SetItemText(nListPos, 1, strTgtMsg);
 
+	pIoBoard->PutOutBit(_BIT_OUT_BARCODE2, false);
 	preBarcodeCount = pBarCode2->GetCount();
+	nStartTime = GetTickCount();
 	while ( m_tThreadStop == false )
 	{
 		pIoBoard->PutOutBit(_BIT_OUT_BARCODE2, true);
 		if ( pBarCode2->GetCount() > preBarcodeCount)
 		{
-			strSrcMsg = (LPCSTR)pBarCode2->GetDataAt(preBarcodeCount-1);
+			strSrcMsg = (LPCSTR)pBarCode2->GetDataAt(preBarcodeCount);
 
 			if ( strSrcMsg.Compare(strSerialNum) == 0 )
 			{
@@ -2266,13 +2481,14 @@ BOOL CEOL_R7::STEP_CHECK_BARCODE2_SERIAL()
 			break;
 		}
 
-		// 20초간 연결이 되지 않으면 Fail
-		if ( (GetTickCount() - nStartTime) > 20000 )
+		// 30초간 연결이 되지 않으면 Fail
+		if ( (GetTickCount() - nStartTime) > 30000 )
 		{
 			strSrcMsg = _T("Comm Error");
 			break;
 		}
 	}
+	pIoBoard->PutOutBit(_BIT_OUT_BARCODE2, false);
 
 	pMainDlg->m_list_test_process.SetItemText(nListPos, 2, strSrcMsg);
 	

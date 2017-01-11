@@ -161,11 +161,11 @@ void CExpressImgDlg::DrawALL(CDC *pDC, int PartNum)
 		DrawLine_Sub (&BufferDC, 0);	//이동량
 		m_nCurrPos++;
 		break;
-	case LDW_WARN_L :
+	case LDW_WARN_R :
 		DrawLine_Sub (&BufferDC, m_nLaneMovement * (-1));	//이동량
 		m_nCurrPos++;
 		break;
-	case LDW_WARN_R :
+	case LDW_WARN_L :
 		DrawLine_Sub (&BufferDC, m_nLaneMovement);	//이동량
 		m_nCurrPos++;
 		break;
@@ -221,6 +221,46 @@ void CExpressImgDlg::DrawALL(CDC *pDC, int PartNum)
 		Vehicle_Sub (&BufferDC, -3, 35, IDB_BITMAP_REALCAR01BRAKE);	//이동량, 초기크기
 		m_nCurrPos++;
 		break;
+	case FCW_CAR_DETECT2 :
+		DrawLine_Sub (&BufferDC, 0);	//이동량
+		Vehicle_Sub (&BufferDC, 0, 0, IDB_BITMAP_REALCAR02);	//이동량, 초기크기
+		m_nCurrPos++;
+		break;
+	case FCW_CAR_WARN2 :
+		DrawLine_Sub (&BufferDC, 0);	//이동량
+		Vehicle_Sub (&BufferDC, 4, 0, IDB_BITMAP_REALCAR02);	//이동량, 초기크기
+		m_nCurrPos++;
+		break;
+	case FCDA_CAR_DETECT2 :
+		DrawLine_Sub (&BufferDC, 0);	//이동량
+		Vehicle_Sub (&BufferDC, 0, 35, IDB_BITMAP_REALCAR02);	//이동량, 초기크기
+		m_nCurrPos++;
+		break;
+	case FCDA_CAR_WARN2 :
+		DrawLine_Sub (&BufferDC, 0);	//이동량
+		Vehicle_Sub (&BufferDC, -3, 35, IDB_BITMAP_REALCAR02);	//이동량, 초기크기
+		m_nCurrPos++;
+		break;
+	case FCW_CAR_DETECT3 :
+		DrawLine_Sub (&BufferDC, 0);	//이동량
+		Vehicle_Sub (&BufferDC, 0, 0, IDB_BITMAP_REALCAR03);	//이동량, 초기크기
+		m_nCurrPos++;
+		break;
+	case FCW_CAR_WARN3 :
+		DrawLine_Sub (&BufferDC, 0);	//이동량
+		Vehicle_Sub (&BufferDC, 4, 0, IDB_BITMAP_REALCAR03);	//이동량, 초기크기
+		m_nCurrPos++;
+		break;
+	case FCDA_CAR_DETECT3 :
+		DrawLine_Sub (&BufferDC, 0);	//이동량
+		Vehicle_Sub (&BufferDC, 0, 35, IDB_BITMAP_REALCAR03);	//이동량, 초기크기
+		m_nCurrPos++;
+		break;
+	case FCDA_CAR_WARN3 :
+		DrawLine_Sub (&BufferDC, 0);	//이동량
+		Vehicle_Sub (&BufferDC, -3, 35, IDB_BITMAP_REALCAR03);	//이동량, 초기크기
+		m_nCurrPos++;
+		break;
 	default :
 
 		break;
@@ -246,7 +286,8 @@ BOOL CExpressImgDlg::ImgSet(_ImgView ImgNum)
 BOOL CExpressImgDlg::ImgSet_Vanish(int vanish)
 {
 	// vanish 값
-	if ( (vanish < 0) || (vanish > rtWholeScreenSize.bottom) ) return 0;
+	if (vanish < 0) return 0;
+	//if ( (vanish < 0) || (vanish > rtWholeScreenSize.bottom) ) return 0;
 
 	m_nVanish = vanish;
 	return 1;

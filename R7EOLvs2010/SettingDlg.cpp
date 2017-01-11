@@ -7,6 +7,7 @@
 #include "afxdialogex.h"
 #include "R7EOLvs2010Dlg.h"
 #include "y_Color.h"
+#include "y_LanguagePack.h"
 
 // SettingDlg 대화 상자입니다.
 
@@ -36,6 +37,9 @@ SettingDlg::SettingDlg(CWnd* pParent /*=NULL*/)
 	, m_check_fcda_warn(FALSE)
 	, m_check_ldw_speed(FALSE)
 	, m_check_fcw_speed(FALSE)
+	, m_check_fcw_warn2(FALSE)
+	, m_check_fcw_warn3(FALSE)
+	, m_radio_language(0)
 {
 
 }
@@ -110,6 +114,10 @@ void SettingDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_CHECK_FCW_SPEED, m_check_fcw_speed);
 	DDX_Control(pDX, IDC_STATIC_G_LOG_PATH, m_static_g_log_path);
 	DDX_Control(pDX, IDC_EDIT_SET_LOG_PATH, m_edit_set_log_path);
+	DDX_Control(pDX, IDC_EDIT_ADAS_ALARM_DELAY, m_edit_adas_alarm_delay);
+	DDX_Check(pDX, IDC_CHECK_FCW_WARN2, m_check_fcw_warn2);
+	DDX_Check(pDX, IDC_CHECK_FCW_WARN3, m_check_fcw_warn3);
+	DDX_Radio(pDX, IDC_RADIO1, m_radio_language);
 }
 
 
@@ -154,6 +162,8 @@ BEGIN_MESSAGE_MAP(SettingDlg, CDialogEx)
 	ON_EN_CHANGE(IDC_EDIT_LANE_L_COLOR, &SettingDlg::OnEnChangeEditLaneLColor)
 	ON_EN_CHANGE(IDC_EDIT_LANE_R_COLOR, &SettingDlg::OnEnChangeEditLaneRColor)
 	ON_WM_ERASEBKGND()
+	ON_EN_CHANGE(IDC_EDIT_ADAS_ALARM_DELAY, &SettingDlg::OnEnChangeEditAdasAlarmDelay)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_RADIO1, IDC_RADIO3, OnBnClickedRadio)
 END_MESSAGE_MAP()
 
 
@@ -278,6 +288,10 @@ void SettingDlg::OnBnClickedButtonSave()
 	EolSetLog.WriteSetting(STEP_LDW_WARN_R, strStepEn);
 	strStepEn.Format(_T("%d"), m_check_fcw_warn);
 	EolSetLog.WriteSetting(STEP_FCW_WARN,	strStepEn);
+	strStepEn.Format(_T("%d"), m_check_fcw_warn2);
+	EolSetLog.WriteSetting(STEP_FCW_WARN2,	strStepEn);
+	strStepEn.Format(_T("%d"), m_check_fcw_warn3);
+	EolSetLog.WriteSetting(STEP_FCW_WARN3,	strStepEn);
 	strStepEn.Format(_T("%d"), m_check_ldw_warnL_winkL);
 	EolSetLog.WriteSetting(STEP_LDW_WARN_L_WINK_L, strStepEn);
 	strStepEn.Format(_T("%d"), m_check_ldw_warnL_winkR);
@@ -292,6 +306,22 @@ void SettingDlg::OnBnClickedButtonSave()
 	EolSetLog.WriteSetting(STEP_LDW_WARN_R_WINK_LR, strStepEn);	
 	strStepEn.Format(_T("%d"), m_check_fcda_warn);
 	EolSetLog.WriteSetting(STEP_FCDA_WARN, strStepEn);
+		
+	EolSetLog.WriteSetting(STEP_ADAS_ALARM_DELAY, m_edit_adas_alarm_delay.m_strMsg);
+	
+	// 언어 선택
+	if ( m_radio_language == L_KOREAN )
+	{
+		EolSetLog.WriteSetting(SET_LANGUAGE, _T("KOREAN"));
+	}
+	else if ( m_radio_language == L_CHINESE )
+	{
+		EolSetLog.WriteSetting(SET_LANGUAGE, _T("CHINESE"));
+	}
+	else if ( m_radio_language == L_ENGLISH )
+	{
+		EolSetLog.WriteSetting(SET_LANGUAGE, _T("ENGLISH"));
+	}
 }
 
 
@@ -375,6 +405,9 @@ void SettingDlg::OnBnClickedButtonLoad()
 	m_edit_proc_fcw_spd.m_strMsg = EolSetLog.ReadSetting(PROC_FCW_SPD);
 	m_edit_proc_fcw_spd.PostMessageW(_WM_THREAD_UPDATE);
 
+	m_edit_adas_alarm_delay.m_strMsg = EolSetLog.ReadSetting(STEP_ADAS_ALARM_DELAY);
+	m_edit_adas_alarm_delay.PostMessageW(_WM_THREAD_UPDATE);
+
 	///////////////////////////////////////////////////////////////////////////
 	// 에디트 키워드 저장
 	m_edit_com_io.SetWindowTextW(m_edit_com_io.m_strMsg);
@@ -413,7 +446,8 @@ void SettingDlg::OnBnClickedButtonLoad()
 	m_edit_proc_ldw_spd.SetWindowTextW(m_edit_proc_ldw_spd.m_strMsg);
 	m_edit_proc_fcw_spd.SetWindowTextW(m_edit_proc_fcw_spd.m_strMsg);
 
-
+	// 검사항목 딜레이
+	m_edit_adas_alarm_delay.SetWindowTextW(m_edit_adas_alarm_delay.m_strMsg);
 	// 검사항목 설정
 	m_check_mcu_ver    = _ttoi(EolSetLog.ReadSetting(STEP_CHECK_MCU_VER));
 	m_check_sw_ver	   = _ttoi(EolSetLog.ReadSetting(STEP_CHECK_SW_VER));
@@ -432,6 +466,8 @@ void SettingDlg::OnBnClickedButtonLoad()
 	m_check_ldw_warn_l = _ttoi(EolSetLog.ReadSetting(STEP_LDW_WARN_L));
 	m_check_ldw_warn_r = _ttoi(EolSetLog.ReadSetting(STEP_LDW_WARN_R));
 	m_check_fcw_warn   = _ttoi(EolSetLog.ReadSetting(STEP_FCW_WARN));
+	m_check_fcw_warn2   = _ttoi(EolSetLog.ReadSetting(STEP_FCW_WARN2));
+	m_check_fcw_warn3   = _ttoi(EolSetLog.ReadSetting(STEP_FCW_WARN3));
 	m_check_ldw_warnL_winkL		= _ttoi(EolSetLog.ReadSetting(STEP_LDW_WARN_L_WINK_L));
 	m_check_ldw_warnL_winkR		= _ttoi(EolSetLog.ReadSetting(STEP_LDW_WARN_L_WINK_R));
 	m_check_ldw_warnL_winkLR	= _ttoi(EolSetLog.ReadSetting(STEP_LDW_WARN_L_WINK_LR));
@@ -439,6 +475,20 @@ void SettingDlg::OnBnClickedButtonLoad()
 	m_check_ldw_warnR_winkR		= _ttoi(EolSetLog.ReadSetting(STEP_LDW_WARN_R_WINK_R));
 	m_check_ldw_warnR_winkLR	= _ttoi(EolSetLog.ReadSetting(STEP_LDW_WARN_R_WINK_LR));
 	m_check_fcda_warn			= _ttoi(EolSetLog.ReadSetting(STEP_FCDA_WARN));
+
+	// 언어 선택
+	if (EolSetLog.ReadSetting(SET_LANGUAGE) == _T("KOREAN"))
+	{
+		m_radio_language = L_KOREAN;
+	}
+	else if (EolSetLog.ReadSetting(SET_LANGUAGE) == _T("CHINESE"))
+	{
+		m_radio_language = L_CHINESE;
+	}
+	else if (EolSetLog.ReadSetting(SET_LANGUAGE) == _T("ENGLISH"))
+	{
+		m_radio_language = L_ENGLISH;
+	}
 
 	UpdateData(FALSE);
 }
@@ -509,8 +559,10 @@ void SettingDlg::OnBnClickedButtonDefault()
 	m_edit_proc_serial_num.SetWindowTextW(m_edit_proc_serial_num.m_strMsg);
 	m_edit_proc_ldw_spd.SetWindowTextW(m_edit_proc_ldw_spd.m_strMsg);
 	m_edit_proc_fcw_spd.SetWindowTextW(m_edit_proc_fcw_spd.m_strMsg);
-
+	
 	// 테스트 항목 설정
+	m_edit_adas_alarm_delay.SetText(WHITE, RED, _T("0"), UPDATE_ON);
+	m_edit_adas_alarm_delay.SetWindowTextW(m_edit_adas_alarm_delay.m_strMsg);
 	//ADAS
 	m_check_ldw_speed = 1;
 	m_check_fcw_speed = 1;
@@ -525,6 +577,8 @@ void SettingDlg::OnBnClickedButtonDefault()
 	m_check_ldw_warnR_winkLR = 0;
 	m_check_fcda_warn = 0;
 	m_check_fcw_warn = 1;
+	m_check_fcw_warn2 = 0;
+	m_check_fcw_warn3 = 0;
 	m_check_mcu_ver = 1;
 	m_check_sw_ver = 1;
 	m_check_serial_num = 1;
@@ -535,6 +589,9 @@ void SettingDlg::OnBnClickedButtonDefault()
 	m_check_accleration= 1;
 	m_check_speed_pulse= 1;
 	m_check_dtc_clear  = 1;
+
+	// 언어 선택
+	m_radio_language = 0;
 
 	UpdateData(FALSE);
 }
@@ -1080,4 +1137,38 @@ BOOL SettingDlg::OnEraseBkgnd(CDC* pDC)
     return TRUE;
 
 	//return CDialogEx::OnEraseBkgnd(pDC);
+}
+
+
+void SettingDlg::OnEnChangeEditAdasAlarmDelay()
+{
+	// TODO:  RICHEDIT 컨트롤인 경우, 이 컨트롤은
+	// CDialogEx::OnInitDialog() 함수를 재지정 
+	//하고 마스크에 OR 연산하여 설정된 ENM_CHANGE 플래그를 지정하여 CRichEditCtrl().SetEventMask()를 호출하지 않으면
+	// 이 알림 메시지를 보내지 않습니다.
+
+	// TODO:  여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(TRUE);								
+									
+	m_edit_adas_alarm_delay.GetWindowTextW	(m_edit_adas_alarm_delay.m_strMsg);							
+	m_edit_adas_alarm_delay.PostMessageW(_WM_THREAD_UPDATE);
+}
+
+
+void SettingDlg::OnBnClickedRadio(UINT msg)
+{
+	// TODO: 여기에 컨트롤 알림 처리기 코드를 추가합니다.
+	UpdateData(TRUE);
+
+	switch(m_radio_language)
+	{
+	case 0:
+		break;
+	case 1:
+		break;
+	default:
+		break;
+	}
+
+	UpdateData(FALSE);
 }

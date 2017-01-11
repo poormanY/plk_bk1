@@ -19,6 +19,7 @@
 #include "SettingDlg.h"
 #include "ScrewDlg.h"
 #include "BarCodeDlg.h"
+#include "y_LanguagePack.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -67,6 +68,7 @@ void CR7EOLvs2010Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_OUT_LDW_WARN_R, m_edit_out_ldw_warn_r);
 	DDX_Control(pDX, IDC_EDIT_OUT_HMW, m_edit_out_hmw);
 	DDX_Control(pDX, IDC_EDIT_OUT_FCW, m_edit_out_fcw);
+	DDX_Control(pDX, IDOK, m_button_close);
 }
 
 BEGIN_MESSAGE_MAP(CR7EOLvs2010Dlg, CDialogEx)
@@ -116,6 +118,24 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	pEolSetting = new CLogManage;
 	pEolSetting->SetFilePath(SETTING_FILE_PATH);
 
+
+	// 언어 선택
+	if (pEolSetting->ReadSetting(SET_LANGUAGE) == _T("KOREAN"))
+	{
+		m_language = L_KOREAN;
+	}
+	else if (pEolSetting->ReadSetting(SET_LANGUAGE) == _T("CHINESE"))
+	{
+		m_language = L_CHINESE;
+	}
+	else if (pEolSetting->ReadSetting(SET_LANGUAGE) == _T("ENGLISH"))
+	{
+		m_language = L_ENGLISH;
+	}
+	// Set Language ( Korean, Chinese, English )
+	EOLLanguage.SET_LANGUAE_PACK(m_language);
+
+
 	strProductLine	= pEolSetting->ReadSetting(TESTER_LINE);
 	strTesterNum	= pEolSetting->ReadSetting(TESTER_NUM);
 	strTester[0]	= pEolSetting->ReadSetting(TESTER_1);
@@ -157,6 +177,8 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	bEnStep_LDW_Warn_L = _ttoi(pEolSetting->ReadSetting(STEP_LDW_WARN_L));
 	bEnStep_LDW_Warn_R = _ttoi(pEolSetting->ReadSetting(STEP_LDW_WARN_R));
 	bEnStep_FCW_Warn   = _ttoi(pEolSetting->ReadSetting(STEP_FCW_WARN));
+	bEnStep_FCW_Warn2   = _ttoi(pEolSetting->ReadSetting(STEP_FCW_WARN2));
+	bEnStep_FCW_Warn3   = _ttoi(pEolSetting->ReadSetting(STEP_FCW_WARN3));
 	bEnStep_FCDA_Warn  = _ttoi(pEolSetting->ReadSetting(STEP_FCDA_WARN));
 	bEnStep_LDW_WarnL_WinkL		= _ttoi(pEolSetting->ReadSetting(STEP_LDW_WARN_L_WINK_L));
 	bEnStep_LDW_WarnL_WinkR		= _ttoi(pEolSetting->ReadSetting(STEP_LDW_WARN_L_WINK_R));
@@ -168,6 +190,8 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	m_nVehicleLdwSpd = _ttoi(pEolSetting->ReadSetting(PROC_LDW_SPD));
 	m_nVehicleFcwSpd = _ttoi(pEolSetting->ReadSetting(PROC_FCW_SPD));
 
+	m_nAlarmDelay = _ttoi(pEolSetting->ReadSetting(STEP_ADAS_ALARM_DELAY));
+
 	// 에디트 박스 설정 값 초기화
 	LOGFONT oLogFont;
     GetFont()->GetLogFont(&oLogFont);
@@ -178,7 +202,7 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
     m_edit_notice.SetBgColor(SOFT_BLUE);					// 백그라운드 색
     m_edit_notice.SetTextColor(GREY_ROAD);					// 글자 색
     m_edit_notice.SetTextFormat(DT_CENTER | DT_VCENTER);	// 좌우/상하 정렬
-	strNotice = _T("PLK Technologies\r\nLDWS ") + strProductName + _T("\r\n양산 최종검사");
+	strNotice = _T("PLK Technologies\r\nLDWS ") + strProductName + EOLLanguage.LP_LAST_TEST;
 	m_edit_notice.SetTextString(strNotice);					// 내용
 	m_edit_notice.PostMessageW(_WM_THREAD_UPDATE);
 	// Notice2
@@ -229,10 +253,10 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	//LVS_EX_HEADERDRAGDROP : 컬럼 헤더를 드래그 함으로써 컬럼의 순서를 바꿀 수 있게 해준다.
 	m_list_test_process.SetExtendedStyle(LVS_EX_GRIDLINES | LVS_EX_FULLROWSELECT);
 	// 리스트 타이틀 삽입
-	m_list_test_process.InsertColumn(0, _T("검사항목"), LVCFMT_CENTER, 200, -1);
-	m_list_test_process.InsertColumn(1, _T("목표값"), LVCFMT_CENTER, 250, -1);
-	m_list_test_process.InsertColumn(2, _T("측정값"), LVCFMT_CENTER, 250, -1);
-	m_list_test_process.InsertColumn(3, _T("판정"), LVCFMT_CENTER, 100, -1);
+	m_list_test_process.InsertColumn(0, EOLLanguage.LP_TEST_INDEX, LVCFMT_CENTER, 200, -1);
+	m_list_test_process.InsertColumn(1, EOLLanguage.LP_TARGET, LVCFMT_CENTER, 250, -1);
+	m_list_test_process.InsertColumn(2, EOLLanguage.LP_CHECK, LVCFMT_CENTER, 250, -1);
+	m_list_test_process.InsertColumn(3, EOLLanguage.LP_RESULT, LVCFMT_CENTER, 100, -1);
 
 	// 콤보 박스 설정 값 초기화
 	// 테스터 항목
@@ -271,6 +295,11 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	// Setting 파일 닫기
 	delete pEolSetting;
     pEolSetting = NULL;
+
+
+	// 다이얼로그 언어 세팅
+	m_cbutton_start.SetWindowTextW(EOLLanguage.LP_START);
+	m_button_close.SetWindowTextW(EOLLanguage.LP_CLOSE);
 
 	return TRUE;  // 포커스를 컨트롤에 설정하지 않으면 TRUE를 반환합니다.
 }
@@ -352,7 +381,7 @@ long CR7EOLvs2010Dlg::R7_EOL_Status_Ready(WPARAM wParam, LPARAM lParam)
 	GetDlgItem(IDC_BUTTON_DRAW)->EnableWindow(TRUE);
 	GetDlgItem(IDC_BUTTON_VIEW_AVI)->EnableWindow(TRUE);
 
-    m_cbutton_start.SetWindowTextW(_T("시작"));
+    m_cbutton_start.SetWindowTextW(EOLLanguage.LP_START);
 
 	return 1;
 }
@@ -369,7 +398,7 @@ void CR7EOLvs2010Dlg::R7_EOL_Status_Running(void)
 	GetDlgItem(IDC_BUTTON_DRAW)->EnableWindow(FALSE);
 	GetDlgItem(IDC_BUTTON_VIEW_AVI)->EnableWindow(FALSE);
 
-    m_cbutton_start.SetWindowTextW(_T("중단"));
+	m_cbutton_start.SetWindowTextW(EOLLanguage.LP_PAUSE);
 }
 
 long CR7EOLvs2010Dlg::OnCommunication(WPARAM wParam, LPARAM lParam)
@@ -396,7 +425,7 @@ void CR7EOLvs2010Dlg::OnBnClickedButtonStart()
 	CString strBtnText;
 	m_cbutton_start.GetWindowTextW(strBtnText);
 
-	if ( strBtnText == _T("시작") )
+	if ( strBtnText == EOLLanguage.LP_START )
 	{
 		dp("***************************** EOL PROGRAM START *****************************\n");
 		R7_EOL_Status_Running();
@@ -409,6 +438,24 @@ void CR7EOLvs2010Dlg::OnBnClickedButtonStart()
 		pImgDlg = new CExpressImgDlg();
 		pImgDlg->Create(IDD_EXPRESS_IMG_DIALOG);
 		pImgDlg->ShowWindow(SW_SHOW);
+
+		// ADAS 그림 설정 값 적용
+		CLogManage	*pEolSetting;
+		pEolSetting = new CLogManage;
+		pEolSetting->SetFilePath(SETTING_FILE_PATH);
+		CString strVanish, strLandWidth, strLaneMove, strLaneLColor, strLaneRColor;
+		strVanish		= pEolSetting->ReadSetting(DRAW_VANISHY);
+		strLandWidth	= pEolSetting->ReadSetting(DRAW_WIDTH);
+		strLaneMove		= pEolSetting->ReadSetting(DRAW_MOVEMENT);
+		strLaneLColor	= pEolSetting->ReadSetting(DRAW_LANE_L_COLOR);
+		strLaneRColor	= pEolSetting->ReadSetting(DRAW_LANE_R_COLOR);
+		pImgDlg->ImgSet_Vanish(_ttoi(strVanish));
+		pImgDlg->ImgSet_LandWidth(_ttoi(strLandWidth));
+		pImgDlg->ImgSet_LaneMovemnet(_ttoi(strLaneMove));
+		pImgDlg->ImgSet_LaneLColor(CStringToRGB(strLaneLColor));
+		pImgDlg->ImgSet_LaneRColor(CStringToRGB(strLaneRColor));
+		delete pEolSetting;
+		pEolSetting = NULL;
 
 		// Find() R7 문자열이 포함되어 있는지 확인, 없으면 -1을 return
 		if ( m_edit_product_name.m_strMsg.Find(_T("R7")) != -1)
@@ -552,6 +599,14 @@ void CR7EOLvs2010Dlg::OnBnClickedButtonDraw()
 			else if ( nImgDrawNum == pImgDlg->FCW_CAR_WARN)		pImgDlg->ImgSet(pImgDlg->FCW_CAR_WARN);
 			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_DETECT)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_DETECT);
 			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_WARN)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_WARN);
+			else if ( nImgDrawNum == pImgDlg->FCW_CAR_DETECT2)	pImgDlg->ImgSet(pImgDlg->FCW_CAR_DETECT2);
+			else if ( nImgDrawNum == pImgDlg->FCW_CAR_WARN2)		pImgDlg->ImgSet(pImgDlg->FCW_CAR_WARN2);
+			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_DETECT2)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_DETECT2);
+			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_WARN2)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_WARN2);
+			else if ( nImgDrawNum == pImgDlg->FCW_CAR_DETECT3)	pImgDlg->ImgSet(pImgDlg->FCW_CAR_DETECT3);
+			else if ( nImgDrawNum == pImgDlg->FCW_CAR_WARN3)		pImgDlg->ImgSet(pImgDlg->FCW_CAR_WARN3);
+			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_DETECT3)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_DETECT3);
+			else if ( nImgDrawNum == pImgDlg->FCDA_CAR_WARN3)	pImgDlg->ImgSet(pImgDlg->FCDA_CAR_WARN3);
 			else if ( nImgDrawNum == pImgDlg->LDW_DETECT_NIGHT )		pImgDlg->ImgSet(pImgDlg->LDW_DETECT_NIGHT);
 			else if ( nImgDrawNum == pImgDlg->LDW_WARN_L_NIGHT )		pImgDlg->ImgSet(pImgDlg->LDW_WARN_L_NIGHT);
 			else if ( nImgDrawNum == pImgDlg->LDW_WARN_R_NIGHT )		pImgDlg->ImgSet(pImgDlg->LDW_WARN_R_NIGHT);

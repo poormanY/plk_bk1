@@ -47,12 +47,23 @@ BOOL JTP_Com::AutoOpenCom()
 {
 	CString strComName;
 	
+	if (m_hCom != INVALID_HANDLE_VALUE)
+	{
+		if ( SendMsg_Connect(500) == TRUE )
+		{
+			return TRUE;
+		}
+		else
+		{
+			CloseCom();
+		}
+	}
+
 	for (int i = 1; i <= 20; i++)
 	{
 		strComName.Format(_T("COM%d"), i);
 		if (OpenCom(strComName) == FALSE) continue;
 
-		// WATEX Connection in ZIG
 		if ( SendMsg_Connect(500) == TRUE )
 		{			
 			dp("R7 USART Port : COM%d \n", i);

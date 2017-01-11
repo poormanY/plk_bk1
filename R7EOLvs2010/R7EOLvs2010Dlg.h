@@ -9,6 +9,7 @@
 #include "y_SerialComm.h"
 #include "y_Draw.h"
 #include "y_ExpressImgDlg.h"
+#include "y_LanguagePack.h"
 
 #include "afxcmn.h"
 
@@ -58,16 +59,20 @@ protected:
 public:
 	CExpressImgDlg *pImgDlg; // 모달리스 다이얼로그
 
+	CLanguagePack	EOLLanguage;// 언어 선택
+	int m_language;
+	
 	CLogManage		EOLSaveLog;	// 테스트 로그 기록
 	CString			strTesterNum, strProductName, strProductLine;
 	CString			strLogPath, strMcuVer, strSwVer;
 	BOOL			bEnStep_McuVer, bEnStep_SwVer, bEnStep_SerialNum, bEnStep_IoBoard, bEnStep_Screw, bEnStep_Bar1, bEnStep_Bar2;
 	BOOL			bEnStep_Accleration, bEnStep_SpeedPulse, bEnStep_DTC_Clear, bEnStep_LDW_Speed, bEnStep_FCW_Speed;
-	BOOL			bEnStep_LDW_Detect, bEnStep_LDW_Warn_L, bEnStep_LDW_Warn_R, bEnStep_FCW_Warn, bEnStep_FCDA_Warn;
+	BOOL			bEnStep_LDW_Detect, bEnStep_LDW_Warn_L, bEnStep_LDW_Warn_R, bEnStep_FCW_Warn, bEnStep_FCW_Warn2, bEnStep_FCW_Warn3, bEnStep_FCDA_Warn;
 	BOOL			bEnStep_LDW_WarnL_WinkL, bEnStep_LDW_WarnL_WinkR, bEnStep_LDW_WarnL_WinkLR;
 	BOOL			bEnStep_LDW_WarnR_WinkL, bEnStep_LDW_WarnR_WinkR, bEnStep_LDW_WarnR_WinkLR;
 	int m_nVehicleLdwSpd;
 	int m_nVehicleFcwSpd;
+	int m_nAlarmDelay;
 
 	CEditBox		m_edit_pass_num, m_edit_fail_num, m_edit_total_num, m_edit_pass_percent;
 	// ADAS 정보 다이얼로그에 표시
@@ -99,4 +104,5 @@ public:
 	COLORREF CStringToRGB(CString strColor);//CString -> RGB
 	afx_msg void OnBnClickedButtonSetting();
 	afx_msg void OnBnClickedButtonBarcode();
+	CButton m_button_close;
 };
