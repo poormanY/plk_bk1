@@ -66,8 +66,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 	CString strProcess;
 	int nTotalProcess = 0;
 	int nCurProcess = 1;
-	int nPassNum = 0, nFailNum = 0;
-	CString strPassNum = _T("0"), strFailNum = _T("0"), strTotalNum, strPassPercent;
+	int nPassNum = 0, nFailNum = 0, nTotalTest;
+	CString strPassNum = _T("0"), strFailNum = _T("0"), strTotalNum, strPassPercent, strTotalTest;
 
 	EOL_TEST_R7->m_EOLTestResult = PASS;
 
@@ -81,6 +81,8 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 	pMainDlg->m_edit_fail_num.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);			// 불량갯수 표시
 	pMainDlg->m_edit_total_num.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);		// 전체갯수 표시
 	pMainDlg->m_edit_pass_percent.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);		// 양품비율 표시
+
+	nTotalTest = _ttoi(pMainDlg->m_edit_total_test.m_strMsg);	// 전체 테스트 갯수 가져오기
 
 	pMainDlg->m_edit_in_speed.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);				// 입력속도 표시
 	pMainDlg->m_edit_in_wink_l.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);			// 입력방향지시등 표시
@@ -639,6 +641,10 @@ UINT ThreadEolTest_R7(LPVOID pParam)
 		pMainDlg->m_edit_fail_num.SetText(SOFT_BLUE, GREY_ROAD,strFailNum, UPDATE_ON);			// 불량갯수 표시
 		pMainDlg->m_edit_total_num.SetText(SOFT_BLUE, GREY_ROAD, strTotalNum, UPDATE_ON);		// 전체갯수 표시
 		pMainDlg->m_edit_pass_percent.SetText(SOFT_BLUE, GREY_ROAD, strPassPercent, UPDATE_ON);	// 양품비율 표시
+		// 전체 테스트 갯수
+		nTotalTest++;
+		strTotalTest.Format(_T("%d"), nTotalTest);
+		pMainDlg->m_edit_total_test.SetText(SOFT_BLUE, GREY_ROAD, strTotalTest, UPDATE_ON);	// 전체 테스트 갯수 표시
 
 		////////////////////////////////////////////////////////////////////////////////////////
 		// 테스트 로그 기록
@@ -2480,13 +2486,14 @@ BOOL CEOL_R7::STEP_CHECK_BARCODE2_SERIAL()
 			}
 			break;
 		}
-
+#if 0
 		// 30초간 연결이 되지 않으면 Fail
 		if ( (GetTickCount() - nStartTime) > 30000 )
 		{
 			strSrcMsg = _T("Comm Error");
 			break;
 		}
+#endif
 	}
 	pIoBoard->PutOutBit(_BIT_OUT_BARCODE2, false);
 

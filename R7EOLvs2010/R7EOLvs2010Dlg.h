@@ -63,7 +63,7 @@ public:
 	int m_language;
 	
 	CLogManage		EOLSaveLog;	// 테스트 로그 기록
-	CString			strTesterNum, strProductName, strProductLine;
+	CString			strTesterNum, strProductName, strProductLine, strTotalTest;
 	CString			strLogPath, strMcuVer, strSwVer;
 	BOOL			bEnStep_McuVer, bEnStep_SwVer, bEnStep_SerialNum, bEnStep_IoBoard, bEnStep_Screw, bEnStep_Bar1, bEnStep_Bar2;
 	BOOL			bEnStep_Accleration, bEnStep_SpeedPulse, bEnStep_DTC_Clear, bEnStep_LDW_Speed, bEnStep_FCW_Speed;
@@ -74,7 +74,7 @@ public:
 	int m_nVehicleFcwSpd;
 	int m_nAlarmDelay;
 
-	CEditBox		m_edit_pass_num, m_edit_fail_num, m_edit_total_num, m_edit_pass_percent;
+	CEditBox		m_edit_pass_num, m_edit_fail_num, m_edit_total_num, m_edit_pass_percent, m_edit_total_test;
 	// ADAS 정보 다이얼로그에 표시
 	CEditBox m_edit_in_speed;
 	CEditBox m_edit_in_wink_l;

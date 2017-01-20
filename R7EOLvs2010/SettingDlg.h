@@ -19,6 +19,7 @@ const CString DRAW_MOVEMENT		= _T("DRAW_LANE_MOVEMNET");
 const CString DRAW_LANE_L_COLOR = _T("DRAW_LANE_L_COLOR");
 const CString DRAW_LANE_R_COLOR = _T("DRAW_LANE_R_COLOR");
 const CString PROC_PRODUCT_TYPE = _T("PROC_PRODUCT_TYPE");
+const CString TOTAL_TEST_NUM    = _T("TOTAL_TEST_NUM");
 const CString PROC_MCU_VER		= _T("PROC_MCU_VER");
 const CString PROC_SW_VER		= _T("PROC_SW_VER");
 const CString PROC_SERIAL_NUM	= _T("PROC_SERIAL_NUM");

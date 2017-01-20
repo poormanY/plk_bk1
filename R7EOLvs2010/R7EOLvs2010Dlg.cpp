@@ -69,6 +69,7 @@ void CR7EOLvs2010Dlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_OUT_HMW, m_edit_out_hmw);
 	DDX_Control(pDX, IDC_EDIT_OUT_FCW, m_edit_out_fcw);
 	DDX_Control(pDX, IDOK, m_button_close);
+	DDX_Control(pDX, IDC_EDIT_TOTAL_TEST, m_edit_total_test);
 }
 
 BEGIN_MESSAGE_MAP(CR7EOLvs2010Dlg, CDialogEx)
@@ -153,6 +154,8 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	strTester[12]	= pEolSetting->ReadSetting(TESTER_13);
 	strTester[13]	= pEolSetting->ReadSetting(TESTER_14);
 	strProductName	= pEolSetting->ReadSetting(PROC_PRODUCT_TYPE);
+	strTotalTest    = pEolSetting->ReadSetting(TOTAL_TEST_NUM);
+	if ( strTotalTest == "" )	strTotalTest = _T("0");
 	// 로그 파일 경로 설정
 	strLogPath		= pEolSetting->ReadSetting(LOG_FILE_PATH);
 
@@ -222,6 +225,7 @@ BOOL CR7EOLvs2010Dlg::OnInitDialog()
 	m_edit_fail_num.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);			// 불량갯수 표시
 	m_edit_total_num.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);			// 전체갯수 표시
 	m_edit_pass_percent.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);		// 양품비율 표시
+	m_edit_total_test.SetText(SOFT_BLUE, GREY_ROAD, strTotalTest, UPDATE_ON);	// 전체 테스트 갯수 표시
 
 	m_edit_in_speed.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);				// 입력속도 표시
 	m_edit_in_wink_l.SetText(SOFT_BLUE, GREY_ROAD, _T("0"), UPDATE_ON);				// 입력방향지시등 표시
@@ -468,8 +472,19 @@ void CR7EOLvs2010Dlg::OnBnClickedButtonStart()
 
 		}
 	}
-	else if ( strBtnText == _T("중단") )
+	//else if ( strBtnText == EOLLanguage.LP_PAUSE )
+	else
 	{
+		// 전체 테스트 갯수 저장하기
+		CLogManage	*pEolSetting;
+		pEolSetting = new CLogManage;
+		pEolSetting->SetFilePath(SETTING_FILE_PATH);
+
+		pEolSetting->WriteSetting(TOTAL_TEST_NUM , m_edit_total_test.m_strMsg);
+		delete pEolSetting;
+		pEolSetting = NULL;
+
+
 		if ( m_edit_product_name.m_strMsg.Find(_T("R7")) != -1 )
 		{
 			EOL_TEST_R7->END_EOL_TEST();
